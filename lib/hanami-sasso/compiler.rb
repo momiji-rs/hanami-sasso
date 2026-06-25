@@ -67,7 +67,9 @@ module HanamiSasso
         write_source_map(dest, result.source_map)
         File.write(dest, result.css + source_map_footer(File.basename(dest)))
       else
-        File.write(dest, ::Sasso.compile(src, style: @style, load_paths: @load_paths))
+        # sasso >= 0.2.7's library API omits the trailing newline; a built CSS
+        # artifact conventionally ends with one (and dart-sass's CLI writes it).
+        File.write(dest, "#{::Sasso.compile(src, style: @style, load_paths: @load_paths)}\n")
       end
       dest
     end
@@ -100,7 +102,9 @@ module HanamiSasso
 
     def source_map_footer(css_basename)
       comment = "/*# sourceMappingURL=#{css_basename}.map */"
-      @style == :compressed ? "#{comment}\n" : "\n#{comment}\n"
+      # sasso >= 0.2.7's `result.css` has no trailing newline, so the expanded
+      # footer supplies the line terminator AND dart's blank separator line.
+      @style == :compressed ? "#{comment}\n" : "\n\n#{comment}\n"
     end
 
     def relative_source(url, from_dir)

@@ -36,7 +36,9 @@ class TestHanamiSasso < Minitest::Test
     with_app({ "app.scss" => SCSS }) do |root|
       compiler(root, style: :expanded).build
       reference = ::Sasso.compile(File.join(root, "app/assets/css/app.scss"), style: :expanded)
-      assert_equal reference, read_build(root, "app.css")
+      # The build artifact is the library output plus the conventional trailing
+      # newline the compiler adds (sasso >= 0.2.7's library API omits it).
+      assert_equal "#{reference}\n", read_build(root, "app.css")
     end
   end
 
