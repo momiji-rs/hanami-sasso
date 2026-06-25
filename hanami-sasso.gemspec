@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   # integrates with Hanami's `assets:precompile` when present but never loads the
   # framework itself. Targets Hanami 2.1+.
   spec.add_dependency "rake", ">= 13.0"
-  spec.add_dependency "sasso", ">= 0.2.3", "< 1"
+  spec.add_dependency "sasso", ">= 0.2.7", "< 1"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "minitest", "~> 5.0"
