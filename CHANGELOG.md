@@ -3,7 +3,46 @@
 All notable changes to **hanami-sasso** are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+This gem versions independently of the `sasso` compiler gem — it depends on a
+*range* of it, so its own number could not honestly name a compiler version.
+Each release notes the range it requires; `Sasso::CORE_VERSION` reports the
+compiler actually installed.
+
 ## [Unreleased]
+
+## [0.1.3] - 2026-09-17
+
+Now requires the `sasso` gem **>= 0.14.0** (was `>= 0.2.7`), and **Ruby >= 3.2**.
+
+### Removed
+
+- **Ruby 3.1 support** (`required_ruby_version` is now `>= 3.2.0`), following the
+  `sasso` engine gem, which dropped it in 0.14.0. It is off the CI matrix too.
+
+### Changed
+
+- Bumped the `sasso` engine-gem floor to **>= 0.14.0**. From that release the
+  engine gem's version tracks the compiler crate it bundles, so the floor names
+  the compiler as well: core 0.14.0, at **dart-sass 1.104.1** parity, where 0.2.7
+  carried core 0.6.3 (1.101.0).
+- **Your compiled CSS changes**, because the compiler's output moved with the
+  core. It remains byte-identical to dart-sass; it is not byte-identical to what
+  0.2.7 wrote, so `assets:precompile` output — and anything digesting it — sees
+  one round of churn. The engine gem's
+  [CHANGELOG](https://github.com/momiji-rs/sasso-ruby/blob/main/CHANGELOG.md)
+  lists every change; the two most likely to appear in a Hanami app:
+  - **Serialization only** — the CSS means the same thing, spelled differently.
+    Compressed `hsl`/`hwb` route through `rgb`, and a legacy color with a
+    fractional channel writes percentages, so `darken(#336699, 10%)` compresses
+    to `rgb(15%,30%,45%)` rather than `hsl(210,50%,30%)`.
+  - **Not serialization only** — global `whiteness()` / `blackness()` are no
+    longer built-ins and now pass through as plain CSS, matching dart-sass. This
+    one changes what the browser does: `whiteness(#f00)` used to compile to `0%`,
+    and now emits an unknown CSS function, which makes the declaration invalid
+    and the browser drop it. It is also silent — no error, no warning — so it is
+    the one to grep for. Use `color.whiteness()` via `@use "sass:color"`.
+- No change to this gem's own rake tasks or configuration. Verified green against
+  `sasso` 0.14.0 (9 runs, 30 assertions).
 
 ## [0.1.2] - 2026-06-25
 

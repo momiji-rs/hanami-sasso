@@ -26,13 +26,20 @@ Gem::Specification.new do |spec|
   end
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 3.1.0"
+  # Follows the `sasso` engine gem, which dropped Ruby 3.1 in 0.14.0 (3.1 left
+  # security maintenance in March 2025). A 3.1 install could not resolve the
+  # dependency below in any case.
+  spec.required_ruby_version = ">= 3.2.0"
 
   # The gem's runtime code requires only the compiler (+ Rake for the tasks); it
   # integrates with Hanami's `assets:precompile` when present but never loads the
   # framework itself. Targets Hanami 2.1+.
   spec.add_dependency "rake", ">= 13.0"
-  spec.add_dependency "sasso", ">= 0.2.7", "< 1"
+  # From 0.14.0 the engine gem's version tracks the core compiler crate it
+  # bundles, so this floor names the compiler too: 0.14.0 carries core 0.14.0
+  # (dart-sass 1.104.1 parity), where 0.2.7 carried core 0.6.3 (1.101.0). `< 1`
+  # allows the rest of the 0.x line — the API surface used here is two methods.
+  spec.add_dependency "sasso", ">= 0.14.0", "< 1"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "minitest", "~> 5.0"
