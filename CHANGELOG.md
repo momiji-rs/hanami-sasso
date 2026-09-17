@@ -31,12 +31,16 @@ Now requires the `sasso` gem **>= 0.14.0** (was `>= 0.2.7`), and **Ruby >= 3.2**
   one round of churn. The engine gem's
   [CHANGELOG](https://github.com/momiji-rs/sasso-ruby/blob/main/CHANGELOG.md)
   lists every change; the two most likely to appear in a Hanami app:
-  - Compressed `hsl`/`hwb` route through `rgb`, and a legacy color with a
-    fractional channel writes percentages — `darken(#336699, 10%)` compresses to
-    `rgb(15%,30%,45%)`, not `hsl(210,50%,30%)`.
-  - Global `whiteness()` / `blackness()` are **no longer built-ins** and pass
-    through as plain CSS (`whiteness(#f00)` instead of `0%`), matching dart-sass.
-    Silent — no error, no warning — so grep for it.
+  - **Serialization only** — the CSS means the same thing, spelled differently.
+    Compressed `hsl`/`hwb` route through `rgb`, and a legacy color with a
+    fractional channel writes percentages, so `darken(#336699, 10%)` compresses
+    to `rgb(15%,30%,45%)` rather than `hsl(210,50%,30%)`.
+  - **Not serialization only** — global `whiteness()` / `blackness()` are no
+    longer built-ins and now pass through as plain CSS, matching dart-sass. This
+    one changes what the browser does: `whiteness(#f00)` used to compile to `0%`,
+    and now emits an unknown CSS function, which makes the declaration invalid
+    and the browser drop it. It is also silent — no error, no warning — so it is
+    the one to grep for. Use `color.whiteness()` via `@use "sass:color"`.
 - No change to this gem's own rake tasks or configuration. Verified green against
   `sasso` 0.14.0 (9 runs, 30 assertions).
 
