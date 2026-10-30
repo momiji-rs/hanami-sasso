@@ -39,6 +39,9 @@ Gem::Specification.new do |spec|
   # bundles, so this floor names the compiler too: 0.14.0 carries core 0.14.0
   # (dart-sass 1.104.1 parity), where 0.2.7 carried core 0.6.3 (1.101.0). `< 1`
   # allows the rest of the 0.x line — the API surface used here is two methods.
+  # Not raised for 0.21.0: nothing here uses its one new option
+  # (`silence_deprecations:`), and a low floor lets an app pin the compiler back
+  # when the stricter 0.21 core rejects one of its stylesheets.
   spec.add_dependency "sasso", ">= 0.14.0", "< 1"
 
   spec.add_development_dependency "bundler"

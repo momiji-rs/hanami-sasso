@@ -10,6 +10,35 @@ compiler actually installed.
 
 ## [Unreleased]
 
+Works with the `sasso` gem **0.21.0**. The requirement stays **>= 0.14.0, < 1**.
+
+### Changed
+
+- **Verified against `sasso` 0.21.0** (core 0.21.0), green with no code change
+  (9 runs, 30 assertions). The floor is not raised: this gem calls only
+  `Sasso.compile`, whose signature 0.21.0 keeps, and a lower floor lets an app
+  hold the compiler back while it fixes its stylesheets (below).
+- **A `bundle update` can now break `sasso:compile`.** The `< 1` range admits
+  0.21.0, and its compiler is stricter than 0.14's: some stylesheets that
+  compiled before now raise `Sasso::CompileError`, which fails `sasso:compile`
+  and therefore `assets:precompile`. The usual causes are a built-in given an
+  argument name it does not declare (`math.max(1, 2, $x: 999)`), an argument
+  passed both by position and by name, and selectors dart-sass's grammar rejects
+  (`[a=1]`, `a^b`). Some output also changes, a few cases in meaning. The engine
+  gem's
+  [CHANGELOG](https://github.com/momiji-rs/sasso-ruby/blob/main/CHANGELOG.md)
+  (section `0.21.0`) lists every change. To stay on the old compiler while you
+  fix them, pin it in your app's Gemfile: `gem "sasso", "< 0.21"`.
+- **A new warning, `bogus-combinators`**, prints during `sasso:compile` when a
+  rule with a repeated or leading combinator (`a > + b`) is dropped. The rule was
+  dropped before too, silently. This gem does not yet forward the engine's new
+  `silence_deprecations:` option, so the warning can only be fixed at its source.
+
+### Added
+
+- Ruby 4.0 on the CI matrix. On 4.0, `sasso` resolves to 0.14.1 or later, the
+  first release with a Ruby 4.0 binary.
+
 ## [0.1.3] - 2026-09-17
 
 Now requires the `sasso` gem **>= 0.14.0** (was `>= 0.2.7`), and **Ruby >= 3.2**.
