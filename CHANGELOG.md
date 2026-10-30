@@ -10,6 +10,8 @@ compiler actually installed.
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-10-30
+
 Works with the `sasso` gem **0.21.0**. The requirement stays **>= 0.14.0, < 1**.
 
 ### Changed
